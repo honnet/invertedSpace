@@ -1,3 +1,4 @@
+/****Includes****/
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <DNSServer.h>            //Local DNS Server used for redirecting all requests to the configuration portal
@@ -5,61 +6,62 @@
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
 #include <Adafruit_NeoPixel.h>
 
+/****Config****/
 #define PIN   D2
 const char *ssid = "River";
 
 /*****Initialization*****/
-ESP8266WebServer server(8080);
+ESP8266WebServer server(80);
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, PIN, NEO_GRB + NEO_KHZ800);
 
-
-/* Go to http://192.168.4.1 in a web browser
- * connected to this access point to see it.
- */
+/*****WebPage*****/
 void handleRoot() {
   server.send(200, "text/html", "\
   <html>\
     <head>\
-      <title>Collier de Paulette</title>\
-      <script src='https://code.jquery.com/jquery-1.10.2.js'></script>\
+      <title>Paulette' Necklace</title>\
+      <link rel='stylesheet' href='http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css'>\
+      <script src='http://code.jquery.com/jquery-1.11.3.min.js'></script>\
+      <script src='http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'></script>\
       <script type='text/javascript' charset='utf-8'>\
-        $('p').on('click',function(){$(this).hide();});\
+      $(document).ready(function(){\
+        $('p').on('swipe',function(){\
+          $(this).toggleClass('on');\
+          var domElement = $(this).get(0);\
+          $( 'span:first' ).text( 'swipe on - ' + domElement.className + ' ' + domElement.id);\
+          $.get( '/settings' , {id:domElement.id, state:domElement.className});\
+          });\
+      });\
       </script>\
     </head>\
-      <h1>Paulette's Necklace</h1>\
-        <p>Swipe Me !</p>\
+        <span></span>\
+        <p id='led1'>LED 1</p>\
+        <p id='led2'>LED 2</p>\
+        <p id='led3'>LED 3</p>\
+        <p id='led4'>LED 4</p>\
+        <p id='led5'>LED 5</p>\
+        <p id='led6'>LED 6</p>\
+        <p id='led7'>LED 7</p>\
   </html>");
 }
 
-void rainbow(uint8_t wait) {
-  uint16_t i, j;
-
-  for(j=0; j<256; j++) {
-    for(i=0; i<pixels.numPixels(); i++) {
-      pixels.setPixelColor(i, Wheel((i+j) & 255));
-    }
-    pixels.show();
-    delay(wait);
+/****Manage LEDs****/
+void handleLEDs() {
+  if (server.hasArg("id") && server.hasArg("state")) {
+    Serial.println("id&state");
+  }
+  else {
+    Serial.println("nothing");
   }
 }
 
-uint32_t Wheel(byte WheelPos) {
-  WheelPos = 255 - WheelPos;
-  if(WheelPos < 85) {
-    return pixels.Color(255 - WheelPos * 3, 0, WheelPos * 3);
-  }
-  if(WheelPos < 170) {
-    WheelPos -= 85;
-    return pixels.Color(0, WheelPos * 3, 255 - WheelPos * 3);
-  }
-  WheelPos -= 170;
-  return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
-}
-
-void setup() {
+/****Setups****/
+void setupSerial() {
   delay(1000);
   Serial.begin(115200);
-  
+}
+
+void setupWifi() {
   //WiFiManager
   WiFiManager wifiManager;
   //reset saved settings -- Flush flash
@@ -68,12 +70,30 @@ void setup() {
   //if it does not connect it starts an access point with the specified name
   //and goes into a blocking loop awaiting configuration
   wifiManager.autoConnect(ssid);
-    
+  Serial.println("local ip");
+  Serial.println(WiFi.localIP());
+}
+
+void setupServer() {
+  server.on("/", handleRoot);
+  server.on("/settings", handleLEDs);
+  server.begin();
+  Serial.println("HTTP server started");
+}
+
+void setupPixels() {
   // This initializes the NeoPixel library.
   pixels.begin(); 
 }
 
+void setup() {
+  setupSerial();
+  setupWifi();
+  setupServer();
+  setupPixels();
+}
+
+/****Loop****/
 void loop() {
   server.handleClient();
-  //rainbow(20);
 }
