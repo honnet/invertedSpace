@@ -74,8 +74,8 @@ void handleLEDs() {
     int id = server.arg("id").toInt();
 
     // check if state changed:
-    if (leds_states[id] != server.arg("state").equals("LED on")) {
-      leds_states[id] = server.arg("state").equals("LED on");
+    if (leds_states[id] != server.arg("state").equals("1")) {
+      leds_states[id] = server.arg("state").equals("1");
     }
   }
   else {
@@ -195,4 +195,3 @@ uint32_t Wheel(byte WheelPos) {
   WheelPos -= 170;
   return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
-

@@ -1,43 +1,85 @@
 <!doctype html>
 <html>
 <head>
-  <title>Paulette' Necklace</title>
-  <link rel='stylesheet' href='http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css'>
-  <script src='http://code.jquery.com/jquery-1.11.3.min.js'></script>
-  <script src='http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'></script>
+  <title>Blacklight</title>
+
   <style>
-    .LED
-    {
-        width:100%;
-        border: 2px solid black;
-        border:2px solid black;
+
+  body {
+    background: #f7f7f7;
+    font-family: helvetica, arial, sans;
+  }
+
+  .holder {
+    margin: 0 auto 0 auto;
+  }
+
+  .led {
+        width:80%;
+        box-shadow:0 1px 1px #ccc;
+        padding: 10px;
+        margin: 6px auto 4px auto;
+        background: #fff;
+        text-align: center;
+
     }
+
+    .led:hover {
+      background: #e2674a;
+    }
+
+    .on, .led:hover .on {
+      background: #39c;
+      color: white;
+    }
+
+
   </style>
 </head>
 <body>
-    <span></span>
-    <div id='0' class='LED'>LED 0</div>
-    <div id='1' class='LED'>LED 1</div>
-    <div id='2' class='LED'>LED 2</div>
-    <div id='3' class='LED'>LED 3</div>
-    <div id='4' class='LED'>LED 4</div>
-    <div id='5' class='LED'>LED 5</div>
-    <div id='6' class='LED'>LED 6</div>
+    <div class="holder">
+    <div id='0' class='led' onclick="lightup(event, 0)">LED 0</div>
+    <div id='1' class='led' onclick="lightup(event, 1)">LED 1</div>
+    <div id='2' class='led' onclick="lightup(event, 2)">LED 2</div>
+    <div id='3' class='led' onclick="lightup(event, 3)">LED 3</div>
+    <div id='4' class='led' onclick="lightup(event, 4)">LED 4</div>
+    <div id='5' class='led' onclick="lightup(event, 5)">LED 5</div>
+    <div id='6' class='led' onclick="lightup(event, 6)">LED 6</div>
+    </div>
     <script type='text/javascript' charset='utf-8'>
-      $(document).ready(function(){
-        var w = $(window).width();
-        var h = $(window).height();
-        var ledButton = $('div.LED');
-        ledButton.each(function( index ) {
-          $( this ).css('height',h/ledButton.length);
-        });
-        ledButton.on('swipe',function(){
-          $(this).toggleClass('on');
-          var domElement = $(this).get(0);
-          $( 'span:first' ).text( 'swipe on - ' + domElement.className + ' ' + domElement.id);
-          $.get( '/settings' , {id:domElement.id, state:domElement.className});
-        });
-      });
+
+        function lightup(e, id) {
+          var clicked = document.getElementById(id);
+
+          // reset all off
+          leds = document.getElementsByClassName("led");
+          // for (i = 0; i < leds.length; i++) {
+          //     leds[i].className = leds[i].className.replace(" on", "");
+          // }
+
+          clicked.classList.toggle('on');
+          var state = 0;
+          if (clicked.classList.contains('on')) {
+            var state = 1;
+          }
+
+          var url = '/settings?id='+id+'&state='+state;
+          console.log(url);
+          httpGetAsync(url)
+
+      }
+
+      function httpGetAsync(theUrl, callback)
+  {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.onreadystatechange = function() {
+      if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+              callback(xmlHttp.responseText);
+      }
+      xmlHttp.open("GET", theUrl, true); // true for asynchronous
+      xmlHttp.send(null);
+  }
+
     </script>
 </body>
 </html>
