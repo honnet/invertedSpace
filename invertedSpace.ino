@@ -11,12 +11,12 @@ bool leds_states[7] = {1,1,1,1,1,1,1};
 elapsedMillis elapsedTime;
 
 /****Config****/
-#define PIN   D1
+#define  LED_STRIP_PIN  D1 /* LED STRIP PIN - AKA GPIO5 on witty modules */
 const char *ssid = "invertedSpace";
 
 /*****Initialization*****/
 ESP8266WebServer server(80);
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(7, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(7, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
 
 /*****WebPage*****/
 void handleRoot() {
@@ -113,6 +113,7 @@ void setupServer() {
 void setupPixels() {
   // This initializes the NeoPixel library.
   pixels.begin();
+  nonBlockingRainbow(0); // ...and turn on LEDs in the strip
 }
 
 void setup() {
@@ -120,15 +121,21 @@ void setup() {
   digitalWrite(BUILTIN_LED, LOW); // = ON (inverted logic)
 
   setupSerial();
+
+  Serial.println("Starting LEDs.");
+  setupPixels();
+
+  Serial.println("Starting WiFi.");
   setupWifi();
   setupServer();
-  setupPixels();
+
+  Serial.println("Setup OK.");
 }
 
 /****Loop****/
 void loop() {
-  server.handleClient();
   nonBlockingRainbow(20);
+  server.handleClient();
 }
 
 /****Neopixels****/
