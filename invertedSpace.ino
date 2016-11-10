@@ -6,6 +6,7 @@
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
 #include <Adafruit_NeoPixel.h>    //https://github.com/adafruit/Adafruit_NeoPixel
 #include <elapsedMillis.h>        //https://github.com/pfeerick/elapsedMillis
+#include <ESP8266mDNS.h>          //Allow custom URL
 
 bool leds_states[7] = {1,1,1,1,1,1,1};
 elapsedMillis elapsedTime;
@@ -110,6 +111,16 @@ void setupServer() {
   Serial.println("HTTP server started");
 }
 
+void setupMDNS() {
+  // Add service to MDNS-SD to access the ESP with the URL http://<ssid>.local
+  if (MDNS.begin(ssid)) {
+    Serial.print("MDNS responder started as http://");
+    Serial.print(ssid);
+    Serial.println(".local");
+  }
+  MDNS.addService("http", "tcp", 8080);
+}
+
 void setupPixels() {
   // This initializes the NeoPixel library.
   pixels.begin();
@@ -128,6 +139,7 @@ void setup() {
   Serial.println("Starting WiFi.");
   setupWifi();
   setupServer();
+  setupMDNS();
 
   Serial.println("Setup OK.");
 }
