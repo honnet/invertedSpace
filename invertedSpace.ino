@@ -21,51 +21,8 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(7, LED_STRIP_PIN, NEO_GRB + NEO_KHZ
 
 /*****WebPage*****/
 void handleRoot() {
-  server.send(200, "text/html", "\
-<!doctype html>\
-<html>\
-<head>\
-  <title>Inverted Space</title>\
-  <link rel='stylesheet' href='http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css'>\
-  <script src='http://code.jquery.com/jquery-1.11.3.min.js'></script>\
-  <script src='http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'></script>\
-  <style>\
-    .LED\
-    {\
-        width:100%;\
-        border: 2px solid black;\
-        border:2px solid black;\
-    }\
-  </style>\
-</head>\
-<body>\
-    <span></span>\
-    <div id='0' class='LED on'>LED 0</div>\
-    <div id='1' class='LED on'>LED 1</div>\
-    <div id='2' class='LED on'>LED 2</div>\
-    <div id='3' class='LED on'>LED 3</div>\
-    <div id='4' class='LED on'>LED 4</div>\
-    <div id='5' class='LED on'>LED 5</div>\
-    <div id='6' class='LED on'>LED 6</div>\
-    <script type='text/javascript' charset='utf-8'>\
-      $(document).ready(function(){\
-        var w = $(window).width();\
-        var h = $(window).height();\
-        var ledButton = $('div.LED');\
-        ledButton.each(function( index ) {\
-          $( this ).css('height',h/ledButton.length);\
-        });\
-        ledButton.on('swipe',function(){\
-          $(this).toggleClass('on');\
-          var domElement = $(this).get(0);\
-          $( 'span:first' ).text( 'swipe on - ' + domElement.className + ' ' + domElement.id);\
-          $.get( '/settings' , {id:domElement.id, state:domElement.className});\
-        });\
-      });\
-    </script>\
-</body>\
-</html>\
-");
+  String html = "<!DOCTYPE html><title>Blacklight</title><style>body{background:#f7f7f7;font-family:helvetica,arial,sans}.holder{margin:0 auto 0 auto}.led{width:80%;box-shadow:0 1px 1px #ccc;padding:10px;margin:6px auto 4px auto;background:#fff;text-align:center}.led:hover{background:#e2674a}.led:hover .on,.on{background:#39c;color:#fff}</style><div class=holder><div class='led on'id=0>LED 0</div><div class='led on'id=1>LED 1</div><div class='led on'id=2>LED 2</div><div class='led on'id=3>LED 3</div><div class='led on'id=4>LED 4</div><div class='led on'id=5>LED 5</div><div class='led on'id=6>LED 6</div></div><script>function lightup(e){var n=e.target.id,t=document.getElementById(n);t.classList.toggle('on');var o=0;if(t.classList.contains('on'))var o=1;var c='/settings?id='+n+'&state='+o;console.log(c),$jsonp.send(c,{callbackName:'dataSent',onSuccess:function(e){console.log('success!',e)},onTimeout:function(){console.log('timeout!')},timeout:5})}function dataSent(e){console.log(e)}var leds=document.getElementsByClassName('led');for(i=0;i<leds.length;i++)leds[i].addEventListener('click',lightup,!1);var $jsonp=function(){var e={};return e.send=function(e,n){var t=n.callbackName||'callback',o=n.onSuccess||function(){},c=n.onTimeout||function(){},i=n.timeout||10,a=window.setTimeout(function(){window[t]=function(){},c()},1e3*i);window[t]=function(e){window.clearTimeout(a),o(e)};var s=document.createElement('script');s.type='text/javascript',s.async=!0,s.src=e,document.getElementsByTagName('head')[0].appendChild(s)},e}()</script>";
+  server.send(200, "text/html", html);
 }
 
 /****Manage LEDs****/
@@ -195,3 +152,4 @@ uint32_t Wheel(byte WheelPos) {
   WheelPos -= 170;
   return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
+
