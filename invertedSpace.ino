@@ -12,7 +12,7 @@ elapsedMillis elapsedTime;
 
 /****Config****/
 #define PIN   D1
-const char *ssid = "River";
+const char *ssid = "invertedSpace";
 
 /*****Initialization*****/
 ESP8266WebServer server(80);
@@ -24,7 +24,7 @@ void handleRoot() {
 <!doctype html>\
 <html>\
 <head>\
-  <title>Paulette' Necklace</title>\
+  <title>Inverted Space</title>\
   <link rel='stylesheet' href='http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css'>\
   <script src='http://code.jquery.com/jquery-1.11.3.min.js'></script>\
   <script src='http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'></script>\
