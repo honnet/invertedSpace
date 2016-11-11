@@ -24,7 +24,7 @@
 
     }
 
-    .led:hover {
+    .led:hover, .led:active {
       background: #e2674a;
     }
 
@@ -59,12 +59,21 @@
         var id = event.target.id;
         var clicked = document.getElementById(id);
         clicked.classList.toggle('on');
+
         var state = 0;
+        var r = Math.round(Math.random()*255);
+        var g = Math.round(Math.random()*255);
+        var b = Math.round(Math.random()*255);
+        var c = r+','+g+','+b;
+
         if (clicked.classList.contains('on')) {
           var state = 1;
+          clicked.style.background = 'rgb('+c+')';
+        } else {
+          clicked.style.background = '#f7f7f7';
         }
 
-        var url = '/settings?id='+id+'&state='+state;
+        var url = '/settings?id='+id+'&state='+state+'&r='+r+'&g='+g+'&b='+b;
         console.log(url);
         $jsonp.send(url, {
     callbackName: 'dataSent',

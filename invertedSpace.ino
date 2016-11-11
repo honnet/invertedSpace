@@ -9,6 +9,9 @@
 #include <ESP8266mDNS.h>          //Allow custom URL
 
 bool leds_states[7] = {1,1,1,1,1,1,1};
+int r[7] = {0,0,0,0,0,0,0};
+int g[7] = {0,0,0,0,0,0,0};
+int b[7] = {0,0,0,0,0,0,0};
 elapsedMillis elapsedTime;
 
 /****Config****/
@@ -21,18 +24,20 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(7, LED_STRIP_PIN, NEO_GRB + NEO_KHZ
 
 /*****WebPage*****/
 void handleRoot() {
-  String html = "<!DOCTYPE html><title>Blacklight</title><style>body{background:#f7f7f7;font-family:helvetica,arial,sans}.holder{margin:0 auto 0 auto}.led{width:80%;box-shadow:0 1px 1px #ccc;padding:10px;margin:6px auto 4px auto;background:#fff;text-align:center}.led:hover{background:#e2674a}.led:hover .on,.on{background:#39c;color:#fff}</style><div class=holder><div class='led on'id=0>LED 0</div><div class='led on'id=1>LED 1</div><div class='led on'id=2>LED 2</div><div class='led on'id=3>LED 3</div><div class='led on'id=4>LED 4</div><div class='led on'id=5>LED 5</div><div class='led on'id=6>LED 6</div></div><script>function lightup(e){var n=e.target.id,t=document.getElementById(n);t.classList.toggle('on');var o=0;if(t.classList.contains('on'))var o=1;var c='/settings?id='+n+'&state='+o;console.log(c),$jsonp.send(c,{callbackName:'dataSent',onSuccess:function(e){console.log('success!',e)},onTimeout:function(){console.log('timeout!')},timeout:5})}function dataSent(e){console.log(e)}var leds=document.getElementsByClassName('led');for(i=0;i<leds.length;i++)leds[i].addEventListener('click',lightup,!1);var $jsonp=function(){var e={};return e.send=function(e,n){var t=n.callbackName||'callback',o=n.onSuccess||function(){},c=n.onTimeout||function(){},i=n.timeout||10,a=window.setTimeout(function(){window[t]=function(){},c()},1e3*i);window[t]=function(e){window.clearTimeout(a),o(e)};var s=document.createElement('script');s.type='text/javascript',s.async=!0,s.src=e,document.getElementsByTagName('head')[0].appendChild(s)},e}()</script>";
+  String html = "<!DOCTYPE html><title>Blacklight</title><style>body{background:#f7f7f7;font-family:helvetica,arial,sans}.holder{margin:0 auto 0 auto}.led{width:80%;box-shadow:0 1px 1px #ccc;padding:10px;margin:6px auto 4px auto;background:#fff;text-align:center}.led:hover{background:#e2674a}.led:hover .on,.on{background:#39c;color:#fff}</style><div class=holder><div class='led on'id=0>LED 0</div><div class='led on'id=1>LED 1</div><div class='led on'id=2>LED 2</div><div class='led on'id=3>LED 3</div><div class='led on'id=4>LED 4</div><div class='led on'id=5>LED 5</div><div class='led on'id=6>LED 6</div></div><script>function lightup(n){var t=n.target.id,e=document.getElementById(t);e.classList.toggle('on');var o=0,a=Math.round(255*Math.random()),c=Math.round(255*Math.random()),s=Math.round(255*Math.random()),i=a+','+c+','+s;if(e.classList.contains('on')){var o=1;e.style.background='rgb('+i+')'}else e.style.background='#f7f7f7';var l='/settings?id='+t+'&state='+o+'&colour='+i;console.log(l),$jsonp.send(l,{callbackName:'dataSent',onSuccess:function(n){console.log('success!',n)},onTimeout:function(){console.log('timeout!')},timeout:5})}function dataSent(n){console.log(n)}var leds=document.getElementsByClassName('led');for(i=0;i<leds.length;i++)leds[i].addEventListener('click',lightup,!1);var $jsonp=function(){var n={};return n.send=function(n,t){var e=t.callbackName||'callback',o=t.onSuccess||function(){},a=t.onTimeout||function(){},c=t.timeout||10,s=window.setTimeout(function(){window[e]=function(){},a()},1e3*c);window[e]=function(n){window.clearTimeout(s),o(n)};var i=document.createElement('script');i.type='text/javascript',i.async=!0,i.src=n,document.getElementsByTagName('head')[0].appendChild(i)},n}()</script>";
   server.send(200, "text/html", html);
 }
 
 /****Manage LEDs****/
 void handleLEDs() {
-  if ( server.hasArg("id") && server.hasArg("state") ) {
+  if ( server.hasArg("id") && server.hasArg("state") && server.hasArg("r") ) {
     int id = server.arg("id").toInt();
-
     // check if state changed:
     if (leds_states[id] != server.arg("state").equals("1")) {
       leds_states[id] = server.arg("state").equals("1");
+      r[id] = server.arg("r").toInt();
+      g[id] = server.arg("g").toInt();
+      b[id] = server.arg("b").toInt();
     }
   }
   else {
@@ -49,6 +54,7 @@ void setupSerial() {
 void setupWifi() {
   //WiFiManager
   WiFiManager wifiManager;
+  wifiManager.setMinimumSignalQuality(10);
   //reset saved settings -- Flush flash
   //wifiManager.resetSettings();
   //fetches ssid and pass from eeprom and tries to connect
@@ -123,7 +129,8 @@ void nonBlockingRainbow(int waitMs) {
   // "loop" on pixels:
   for(int i=0; i<pixels.numPixels(); i++) {
     if (leds_states[i]) // is pixel web-enabled?
-      pixels.setPixelColor(i, Wheel(((i * 256 / pixels.numPixels()) + j) & 255));
+      //pixels.setPixelColor(i, Wheel(((i * 256 / pixels.numPixels()) + j) & 255));
+      pixels.setPixelColor(i, pixels.Color(r[i],g[i],b[i]));
     else
       pixels.setPixelColor(i, 0); // off
   }
@@ -152,4 +159,3 @@ uint32_t Wheel(byte WheelPos) {
   WheelPos -= 170;
   return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
-
