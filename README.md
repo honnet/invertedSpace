@@ -23,14 +23,14 @@ Elapsed milliseconds:
 
 1st time:
   * program the ESP
-  * open the monitor (115220 bauds) and find printed "AP IP address"
+  * open the monitor (115220 bauds) and find printed 'AP IP address'
   * connect your phone/computer to your ESP (SSID = 'invertedSpace')
   * put the IP in your browser and set the ESP to connect to your favorite network
 
 The monitor should display:
 
-    "WM: Using last saved values, should be faster..."
-    "WM: IP Address:..."
+    'WM: Using last saved values, should be faster...'
+    'WM: IP Address:...'
 
 Then:
   * connect your phone/computer back to your favorite network

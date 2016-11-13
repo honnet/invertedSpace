@@ -36,6 +36,8 @@
   </style>
 </head>
 <body>
+
+
     <div class='holder'>
     <div id='0' class='led on'>LED 0</div>
     <div id='1' class='led on'>LED 1</div>
@@ -76,15 +78,15 @@
         var url = '/settings?id='+id+'&state='+state+'&r='+r+'&g='+g+'&b='+b;
         console.log(url);
         $jsonp.send(url, {
-    callbackName: 'dataSent',
-    onSuccess: function(json){
-        console.log('success!', json);
-    },
-    onTimeout: function(){
-        console.log('timeout!');
-    },
-    timeout: 5
-});
+          callbackName: 'dataSent',
+          onSuccess: function(json){
+              console.log('success!', json);
+          },
+          onTimeout: function(){
+              console.log('timeout!');
+          },
+          timeout: 5
+      });
 
 }
 
