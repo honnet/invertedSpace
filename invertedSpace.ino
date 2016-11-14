@@ -7,6 +7,7 @@
 #include <Adafruit_NeoPixel.h>    //https://github.com/adafruit/Adafruit_NeoPixel
 #include <elapsedMillis.h>        //https://github.com/pfeerick/elapsedMillis
 #include <ESP8266mDNS.h>          //Allow custom URL
+#include "handleRootHTML.h"       //Contains the HTML minified from index.html see README.md
 
 bool leds_states[7] = {1,1,1,1,1,1,1};
 int r[7] = {0,0,0,0,0,0,0};
@@ -22,10 +23,12 @@ const char *ssid = "invertedSpace";
 ESP8266WebServer server(80);
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(7, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
 
+// Content in handleRootHTML.h, see README for details:
+extern String handleRootHTML;
+
 /*****WebPage*****/
 void handleRoot() {
-  String html = "<!DOCTYPE html><title>Blacklight</title><style>body{background:#f7f7f7;font-family:helvetica,arial,sans}.holder{margin:0 auto 0 auto}.led{width:80%;box-shadow:0 1px 1px #ccc;padding:10px;margin:6px auto 4px auto;background:#fff;text-align:center}.led:active,.led:hover{background:#e2674a}.led:hover .on,.on{background:#39c;color:#fff}</style><div class=holder><div class='led on'id=0>LED 0</div><div class='led on'id=1>LED 1</div><div class='led on'id=2>LED 2</div><div class='led on'id=3>LED 3</div><div class='led on'id=4>LED 4</div><div class='led on'id=5>LED 5</div><div class='led on'id=6>LED 6</div></div><script>function lightup(n){var t=n.target.id,e=document.getElementById(t);e.classList.toggle('on');var o=0,a=Math.round(255*Math.random()),c=Math.round(255*Math.random()),s=Math.round(255*Math.random()),i=a+','+c+','+s;if(e.classList.contains('on')){var o=1;e.style.background='rgb('+i+')'}else e.style.background='#f7f7f7';var l='/settings?id='+t+'&state='+o+'&r='+a+'&g='+c+'&b='+s;console.log(l),$jsonp.send(l,{callbackName:'dataSent',onSuccess:function(n){console.log('success!',n)},onTimeout:function(){console.log('timeout!')},timeout:5})}function dataSent(n){console.log(n)}var leds=document.getElementsByClassName('led');for(i=0;i<leds.length;i++)leds[i].addEventListener('click',lightup,!1);var $jsonp=function(){var n={};return n.send=function(n,t){var e=t.callbackName||'callback',o=t.onSuccess||function(){},a=t.onTimeout||function(){},c=t.timeout||10,s=window.setTimeout(function(){window[e]=function(){},a()},1e3*c);window[e]=function(n){window.clearTimeout(s),o(n)};var i=document.createElement('script');i.type='text/javascript',i.async=!0,i.src=n,document.getElementsByTagName('head')[0].appendChild(i)},n}()</script>";
-  server.send(200, "text/html", html);
+  server.send(200, "text/html", handleRootHTML);
 }
 
 /****Manage LEDs****/

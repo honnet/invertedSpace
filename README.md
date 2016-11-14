@@ -22,18 +22,29 @@ Elapsed milliseconds:
 ## Usage
 
 1st time:
-  * program the ESP
-  * open the monitor (115220 bauds) and find printed 'AP IP address'
-  * connect your phone/computer to your ESP (SSID = 'invertedSpace')
-  * put the IP in your browser and set the ESP to connect to your favorite network
-
-The monitor should display:
-
-    'WM: Using last saved values, should be faster...'
-    'WM: IP Address:...'
+  * program the ESP with the arduino IDE (the 1st link should have every details needed)
+  * connect your phone/computer to your the wifi network called 'invertedSpace'
+  * go to the following URL with your browser: http://192.168.4.1/
+  * set the ESP to connect to your favorite network (set the SSID and password)
 
 Then:
-  * connect your phone/computer back to your favorite network
-  * put the IP in your browser
-  * in the interface, swipe LEDs to control them
+  * your phone/computer should connect back to your favorite network
+  * put the following URL in your browser, the rest should be intuitive:
+
+    http://invertedSpace.local/
+
+Note: If you need to change the password, uncomment the follwing line in the .ino file:
+
+    wifiManager.resetSettings();
+
+## Advanced
+
+The HTML/JS code is embedded in the arduino code, using the handleRootHTML.h header.
+To update it, edit index.html and use the following command to update the header:
+
+    ./minify.sh
+
+You will need html-minifier accessible with node, to install it:
+
+    npm install html-minifier -g
 
