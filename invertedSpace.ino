@@ -133,34 +133,11 @@ void nonBlockingLEDcontrol(int waitMs) {
   // "loop" on pixels:
   for(int i=0; i<pixels.numPixels(); i++) {
     if (leds_states[i]) // is pixel web-enabled?
-      //pixels.setPixelColor(i, Wheel(((i * 256 / pixels.numPixels()) + j) & 255));
       pixels.setPixelColor(i, pixels.Color(r[i],g[i],b[i]));
     else
       pixels.setPixelColor(i, 0); // off
   }
 
   pixels.show();
-}
-
-uint32_t Wheel(byte WheelPos) {
-  // color range:
-  const int violet = 210;
-  const int yellow = 30;
-
-  // convertion:
-  const int range = yellow + 255 - violet;
-  WheelPos = ( range * WheelPos / 255 + violet ) % 255;
-
-  // normal wheel:
-  WheelPos = 255 - WheelPos;
-  if(WheelPos < 85) {
-    return pixels.Color(255 - WheelPos * 3, 0, WheelPos * 3);
-  }
-  if(WheelPos < 170) {
-    WheelPos -= 85;
-    return pixels.Color(0, WheelPos * 3, 255 - WheelPos * 3);
-  }
-  WheelPos -= 170;
-  return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
 
