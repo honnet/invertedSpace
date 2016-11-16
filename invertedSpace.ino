@@ -60,6 +60,7 @@ void setupWifi() {
 
   //reset saved settings -- Flush flash
   //wifiManager.resetSettings();
+
   //fetches ssid and pass from eeprom and tries to connect
   //if it does not connect it starts an access point with the specified name
   //and goes into a blocking loop awaiting configuration
@@ -90,7 +91,7 @@ void setupMDNS() {
 void setupPixels() {
   // This initializes the NeoPixel library.
   pixels.begin();
-  nonBlockingRainbow(0); // ...and turn on LEDs in the strip
+  nonBlockingLEDcontrol(0); // ...and turn on LEDs in the strip
 }
 
 void setup() {
@@ -112,12 +113,12 @@ void setup() {
 
 /****Loop****/
 void loop() {
-  nonBlockingRainbow(20);
+  nonBlockingLEDcontrol(20);
   server.handleClient();
 }
 
 /****Neopixels****/
-void nonBlockingRainbow(int waitMs) {
+void nonBlockingLEDcontrol(int waitMs) {
 
   // non blocking delay:
   if (elapsedTime < waitMs)
