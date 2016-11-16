@@ -10,9 +10,9 @@
 #include "handleRootHTML.h"       //Contains the HTML minified from index.html see README.md
 
 bool leds_states[7] = {1,1,1,1,1,1,1};
-int r[7] = {0,0,0,0,0,0,0};
-int g[7] = {0,0,0,0,0,0,0};
-int b[7] = {0,0,0,0,0,0,0};
+int r[7] = {9,9,9,9,9,9,9};
+int g[7] = {9,9,9,9,9,9,9};
+int b[7] = {9,9,9,9,9,9,9};
 elapsedMillis elapsedTime;
 
 /****Config****/
