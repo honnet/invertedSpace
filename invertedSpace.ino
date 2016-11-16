@@ -42,9 +42,11 @@ void handleLEDs() {
       g[id] = server.arg("g").toInt();
       b[id] = server.arg("b").toInt();
     }
+    server.send(200, "text/plain", "");
   }
   else {
     Serial.println("Bad URL.");
+    server.send(404, "text/plain", "Bad URL.");
   }
 }
 
