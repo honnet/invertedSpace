@@ -9,6 +9,7 @@
 #include <ESP8266mDNS.h>          //Allow custom URL
 #include "handleRootHTML.h"       //Contains the HTML minified from index.html see README.md
 
+typedef enum color_e {RED, YELLOW, GREEN} color_t;
 bool leds_states[7] = {1,1,1,1,1,1,1};
 int r[7] = {9,9,9,9,9,9,9};
 int g[7] = {9,9,9,9,9,9,9};
@@ -57,12 +58,20 @@ void setupSerial() {
   Serial.begin(115200);
 }
 
+//gets called when WiFiManager enters configuration mode
+void configModeCallback(WiFiManager *myWiFiManager) {
+  LEDfeedback(RED); // state feedback
+}
+
 void setupWifi() {
   //WiFiManager
   WiFiManager wifiManager;
 
   //reset saved settings -- Flush flash
   //wifiManager.resetSettings();
+
+  //set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
+  wifiManager.setAPCallback(configModeCallback);
 
   //fetches ssid and pass from eeprom and tries to connect
   //if it does not connect it starts an access point with the specified name
@@ -94,7 +103,6 @@ void setupMDNS() {
 void setupPixels() {
   // This initializes the NeoPixel library.
   pixels.begin();
-  nonBlockingLEDcontrol(0); // ...and turn on LEDs in the strip
 }
 
 void setup() {
@@ -105,11 +113,13 @@ void setup() {
 
   Serial.println("Starting LEDs.");
   setupPixels();
+  LEDfeedback(YELLOW); // state feedback
 
   Serial.println("Starting WiFi.");
   setupWifi();
   setupServer();
   setupMDNS();
+  LEDfeedback(GREEN); // state feedback
 
   Serial.println("Setup OK.");
 }
@@ -139,6 +149,31 @@ void nonBlockingLEDcontrol(int waitMs) {
       pixels.setPixelColor(i, pixels.Color(r[i],g[i],b[i]));
     else
       pixels.setPixelColor(i, 0); // off
+  }
+
+  pixels.show();
+}
+
+void LEDfeedback(color_t color) {
+
+  int R=0, G=0, B=0;
+
+  switch (color) {
+    case YELLOW :
+      R = 255;
+      G = 255;
+      break;
+    case RED :
+      R = 255;
+      break;
+    case GREEN :
+      G = 255;
+      break;
+  }
+
+  // "loop" on pixels:
+  for(int i=0; i<pixels.numPixels(); i++) {
+      pixels.setPixelColor(i, pixels.Color(R,G,B));
   }
 
   pixels.show();
