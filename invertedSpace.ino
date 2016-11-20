@@ -33,7 +33,8 @@ void handleRoot() {
 
 /****Manage LEDs****/
 void handleLEDs() {
-  if ( server.hasArg("id") && server.hasArg("state") && server.hasArg("r") ) {
+  if ( server.hasArg("r") && server.hasArg("g") && server.hasArg("b") &&
+       server.hasArg("id") && server.hasArg("state") ) {
     int id = server.arg("id").toInt();
     // check if state changed:
     if (leds_states[id] != server.arg("state").equals("1")) {
