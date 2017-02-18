@@ -1,5 +1,14 @@
 # Inverted Space
 
+IoT & Art!?
+
+In this project we control LEDs from a web interface (using ESP8266 and WS2812).￼
+The applications range from air polution monitoring to simple clock, or artistic visualizations, check this repo:
+
+https://github.com/GeorgeGally/blacklight
+
+Made in China - 2016 ([HTTC](http://noisebridge.net/wiki/NoisebridgeChinaTrip6) extension).
+
 <img src="https://pbs.twimg.com/media/CyjXnRDWEAAyjtL.jpg" alt="latest test" width="300"/>
 <img src="https://pbs.twimg.com/media/Cx-CuLdXABE3LTK.jpg" alt="first test" width="300"/>
 
